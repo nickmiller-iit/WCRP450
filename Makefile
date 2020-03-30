@@ -28,3 +28,27 @@ $(scaffoldsFasta): $(scaffoldsGz)
 .PHONY: getScaffolds
 
 getScaffolds: $(scaffoldsFasta)
+
+# Get the GFF of trancsript models
+
+gffDir=gff
+
+$(gffDir):
+	if [ ! -d $(gffDir) ]; then mkdir $(gffDir); fi
+
+gffURL=http://i5k.nal.usda.gov/sites/default/files/GCF_003013835.1_Dvir_v2.0_genomic_updated.gff.gz
+
+gffGz=$(addsuffix  /$(notdir $(gffURL)), $(gffDir))
+
+$(gffGz): | $(gffDir)
+	wget -P $(gffDir) $(gffURL)
+
+# when decompressing, rename to something less cumbersome
+gff=$(addsuffix /WCR.gff, $(gffDir))
+
+$(gff): $(gffGz)
+	zcat $(gffGz) > $(gff)
+
+.PHONY: getGFF
+
+getGFF: $(gff)
