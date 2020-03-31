@@ -1,0 +1,5 @@
+name: p450_blast
+channels:
+ - bioconda
+dependencies:
+ - blast=2.9
