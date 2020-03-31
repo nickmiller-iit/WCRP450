@@ -73,7 +73,7 @@ $(blastDbDir):
 
 blastDbBaseName=WCRScaffolds
 
-blastDbName=$(addprefix $(blastDbDir)/, $(blastDbBaseName))
+ blastDbName=$(addprefix $(blastDbDir)/, $(blastDbBaseName))
 
 blastDbFiles=$(addprefix $(blastDbName), .nin .nhr .nsq)
 
@@ -87,3 +87,53 @@ $(blastDbFiles): $(scaffoldsFasta) | $(blastDbDir)
 .PHONY: blastdatabase
 
 blastdatabase: $(blastDbFiles)
+
+#################################################################################
+#                                                                               #
+#                   Run blast searches with query proteins                      #
+#                                                                               #
+#################################################################################
+
+
+queryDir=queries
+
+#reduced file sets for testing
+
+# Completed by Dariane
+#queryFileNames=CPB_CYP4_complete.fasta 
+# Completed by Dakota
+#queryFileNames=ALB_Family_4.fasta
+# Completed by Dimpal
+#queryFileNames=Tribolium_castaneum_CYP_12.fasta
+
+queryFileNames=CPB_CYP4_complete.fasta ALB_Family_4.fasta Tribolium_castaneum_CYP_12.fasta
+
+# Remove .fasta suffix to make things clearer later on
+queryNames=$(basename $(queryFileNames))
+
+queryFiles=$(addprefix $(queryDir)/, $(queryFileNames))
+
+blastOutDir=blastresults
+
+$(blastOutDir):
+	if [ ! -d $(blastOutDir) ]; then mkdir $(blastOutDir); fi
+
+
+blastOutFiles=$(addprefix $(blastOutDir)/, $(addsuffix .out, $(queryNames)))
+
+# This doesn't work exactly as I would like because make coonsiders every
+# query file to be a dependency for each ouput file. Consequently, if one
+# input file is news than any output file, all the searches get run again.
+# On the plus side, doing things this way lets us rune the searches in parallel
+# with make -j
+
+$(blastOutFiles): $(queryFiles) $(blastDbFiles) | $(blastOutDir)
+	conda run --name p450_blast \
+	tblastn \
+	-db $(blastDbName) \
+	-query $(subst $(blastOutDir), $(queryDir), $(subst .out,.fasta, $@)) \
+	> $@
+
+.PHONY: runblast
+
+runblast: $(blastOutFiles)
