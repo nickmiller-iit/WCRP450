@@ -59,3 +59,31 @@ $(gff): $(gffGz)
 .PHONY: getGFF
 
 getGFF: $(gff)
+
+#################################################################################
+#                                                                               #
+#                     Make blast database of the scaffolds                      #
+#                                                                               #
+#################################################################################
+
+blastDbDir=blastdb
+
+$(blastDbDir):
+	if [ ! -d $(blastDbDir) ]; then mkdir $(blastDbDir); fi
+
+blastDbBaseName=WCRScaffolds
+
+blastDbName=$(addprefix $(blastDbDir)/, $(blastDbBaseName))
+
+blastDbFiles=$(addprefix $(blastDbName), .nin .nhr .nsq)
+
+$(blastDbFiles): $(scaffoldsFasta) | $(blastDbDir)
+	conda run --name p450_blast \
+	makeblastdb \
+	-in $(scaffoldsFasta) \
+	-dbtype nucl \
+	-out $(blastDbName)
+
+.PHONY: blastdatabase
+
+blastdatabase: $(blastDbFiles)
