@@ -121,9 +121,15 @@ $(blastOutDir):
 
 blastOutFiles=$(addprefix $(blastOutDir)/, $(addsuffix .out, $(queryNames)))
 
-# This doesn't work exactly as I would like because make coonsiders every
+# Easiest to parse output with biopython if in XML format (format option 5)
+# blastOpts=-evalue 0.1 -outfmt 5
+
+# The parsed XML is a pain in the arse
+blastOpts=-evalue 0.1 -outfmt 6
+
+# This doesn't work exactly as I would like because make considers every
 # query file to be a dependency for each ouput file. Consequently, if one
-# input file is news than any output file, all the searches get run again.
+# input file is newer than any output file, all the searches get run again.
 # On the plus side, doing things this way lets us rune the searches in parallel
 # with make -j
 
@@ -132,8 +138,30 @@ $(blastOutFiles): $(queryFiles) $(blastDbFiles) | $(blastOutDir)
 	tblastn \
 	-db $(blastDbName) \
 	-query $(subst $(blastOutDir), $(queryDir), $(subst .out,.fasta, $@)) \
+	$(blastOpts) \
 	> $@
 
 .PHONY: runblast
 
 runblast: $(blastOutFiles)
+
+#################################################################################
+#                                                                               #
+#                          Convert blast output to GFF3                         #
+#                                                                               #
+#################################################################################
+
+scriptsDir = scripts
+conversionScript = $(addprefix $(scriptsDir)/, blast2gff.py)
+
+blastGffFiles=$(addprefix $(gffDir)/, $(addsuffix .gff, $(queryNames)))
+
+$(blastGffFiles): $(blastOutFiles) | $(gffDir)
+	python \
+	$(conversionScript) \
+	$(subst $(gffDir), $(blastOutDir), $(subst .gff,.out, $@)) \
+	> $@
+
+.PHONY: blast2gff
+
+blast2gff: $(blastGffFiles)
