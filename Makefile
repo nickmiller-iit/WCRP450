@@ -165,3 +165,27 @@ $(blastGffFiles): $(blastOutFiles) | $(gffDir)
 .PHONY: blast2gff
 
 blast2gff: $(blastGffFiles)
+
+#################################################################################
+#                                                                               #
+#                 Find transcript models containing blast hits                  #
+#                                                                               #
+#################################################################################
+
+overlapGffFiles=$(subst .gff,.transcript.overlaps.gff, $(blastGffFiles))
+
+bedtoolsOpts=-wa #output original features from file a
+
+# Note: piping to grep filters transcript features only
+$(overlapGffFiles): $(blastGffFiles)
+	conda run --name p450_bedtools \
+	bedtools intersect \
+	$(bedtoolsOpts) \
+	-a $(gff) \
+	-b $(subst .transcript.overlaps.gff,.gff, $@) \
+	| grep ID=rna \
+	> $@
+
+.PHONY: transcriptswithhits
+
+transcriptswithhits: $(overlapGffFiles)
