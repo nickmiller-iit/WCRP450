@@ -106,7 +106,9 @@ queryDir=queries
 # Completed by Dimpal
 #queryFileNames=Tribolium_castaneum_CYP_12.fasta
 
-queryFileNames=CPB_CYP4_complete.fasta ALB_Family_4.fasta Tribolium_castaneum_CYP_12.fasta
+
+#full set
+queryFileNames=ALB_Family_12.fasta ALB_Family_18.fasta ALB_Family_306.fasta ALB_Family_315.fasta ALB_Family_4.fasta ALB_Family_6.fasta ALB_Family_9.fasta ALB_Family_Unaffiliated.fasta CPB_CYP18_complete.fasta CPB_CYP300s_complete.fasta CPB_CYP400s_complete.fasta CPB_CYP4_complete.fasta CPB_CYP6_complete.fasta CPB_CYP9_complete.fasta Tribolium_castaneum_CYP_12.fasta Tribolium_castaneum_CYP_15.fasta Tribolium_castaneum_CYP_18.fasta Tribolium_castaneum_CYP_300s.fasta Tribolium_castaneum_CYP_49.fasta Tribolium_castaneum_CYP_4.fasta Tribolium_castaneum_CYP_6.fasta Tribolium_castaneum_CYP_9.fasta Tribolium_castaneum_CYP_unaffiliated.fasta
 
 # Remove .fasta suffix to make things clearer later on
 queryNames=$(basename $(queryFileNames))
