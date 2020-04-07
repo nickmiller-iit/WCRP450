@@ -191,3 +191,46 @@ $(overlapGffFiles): $(blastGffFiles)
 .PHONY: transcriptswithhits
 
 transcriptswithhits: $(overlapGffFiles)
+
+#################################################################################
+#                                                                               #
+#              Consolidate transcript models with blast hits                    #
+#                                                                               #
+#################################################################################
+
+#
+# There is a lot of redundancy - mutliple hits to the same model. There is also a
+# lot of redundancy with multiple, near-identical gene models for the same gene.
+# We don't want to wade through all of this. Not thate we used trial-and error
+# to figure out the max number of alternative transcrips was 10.
+#
+
+# get the consolidated list of hits
+consolidatedHitsList=$(addprefix $(gffDir)/,consolidatedHits.txt)
+
+$(consolidatedHitsList): $(overlapGffFiles)
+	cat $(overlapGffFiles) \
+	| cut -f9 | \
+	grep -v "transcript variant X[2-9,10]" \
+	| sort -u \
+	| cut -d ';' -f1 \
+	> $(consolidatedHitsList)
+
+.PHONY: consolidatehits
+
+consolidatehits: $(consolidatedHitsList)
+
+# Use the list of hits to grep for corresponding lines in gff
+# Don't forget to drop non-unique lines
+
+consolidatedHitsGff=$(addprefix $(gffDir)/,consolidatedHits.gff)
+
+$(consolidatedHitsGff) : $(consolidatedHitsList)
+	cat $(overlapGffFiles) | \
+	grep -f $(consolidatedHitsList) | \
+	sort -u \
+	> $(consolidatedHitsGff)
+
+.PHONY: consolidatehitsgff
+
+consolidatehitsgff: $(consolidatedHitsGff)
