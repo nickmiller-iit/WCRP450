@@ -234,3 +234,29 @@ $(consolidatedHitsGff) : $(consolidatedHitsList)
 .PHONY: consolidatehitsgff
 
 consolidatehitsgff: $(consolidatedHitsGff)
+
+
+#################################################################################
+#                                                                               #
+#                          Split out lncRNA from mRNA                           #
+#                                                                               #
+#################################################################################
+
+#
+# There are 10 transcripts that are tagged as long non-coding RNAs. We probably
+# want to separate them out from the mRNAs. 
+#
+
+condsolidatedmRNAHitsGff=$(addprefix $(gffDir)/,consolidated.mRNAHits.gff)
+
+condsolidatedlncRNAHitsGff=$(addprefix $(gffDir)/,consolidated.lncRNAHits.gff)
+
+$(condsolidatedmRNAHitsGff): $(consolidatedHitsGff)
+	grep -v "lnc_RNA" $(consolidatedHitsGff) > $(condsolidatedmRNAHitsGff)
+
+$(condsolidatedlncRNAHitsGff): $(consolidatedHitsGff)
+	grep "lnc_RNA" $(consolidatedHitsGff) > $(condsolidatedlncRNAHitsGff)
+
+.PHONY: splitconsolidated
+
+splitconsolidated: $(condsolidatedmRNAHitsGff) $(condsolidatedlncRNAHitsGff)
