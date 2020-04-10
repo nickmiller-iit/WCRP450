@@ -285,3 +285,34 @@ $(shuffledlncRNAHitsGff): $(condsolidatedlncRNAHitsGff)
 .PHONY: shuffle
 
 shuffle: $(shuffledmRNAHitsGff) $(shuffledlncRNAHitsGff)
+
+
+#################################################################################
+#                                                                               #
+#                  Make tables for google sheets / Apollo                       #
+#                                                                               #
+#################################################################################
+
+# Manual annotation makes use of shared google sheet to track who is working on
+# what. Make some tsv files that can be pasted into google sheet and has extra
+# info to locate genes in Apollo
+
+tsvDir=tsv
+
+$(tsvDir):
+	if [ ! -d $(tsvDir) ]; then mkdir $(tsvDir); fi
+
+mRNATSV=$(addprefix $(tsvDir)/, mRNA.hits.tsv)
+
+lncRNATSV=$(addprefix $(tsvDir)/, lncRNA.hits.tsv)
+
+$(mRNATSV): $(shuffledmRNAHitsGff) | $(tsvDir)
+	Rscript scripts/gff2apollo.R $(shuffledmRNAHitsGff) > $(mRNATSV)
+
+$(lncRNATSV): $(shuffledlncRNAHitsGff) | $(tsvDir)
+	Rscript scripts/gff2apollo.R $(shuffledlncRNAHitsGff) > $(lncRNATSV)
+
+.PHONY: googletsv
+
+googletsv: $(mRNATSV) $(lncRNATSV)
+
