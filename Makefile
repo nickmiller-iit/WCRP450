@@ -260,3 +260,28 @@ $(condsolidatedlncRNAHitsGff): $(consolidatedHitsGff)
 .PHONY: splitconsolidated
 
 splitconsolidated: $(condsolidatedmRNAHitsGff) $(condsolidatedlncRNAHitsGff)
+
+#################################################################################
+#                                                                               #
+#                        Shuffle split GFF files                                #
+#                                                                               #
+#################################################################################
+
+# Evenutually we will be splitting the hits among the annotation team. To remove
+# bias that might lumber one person with particularly frustating genes, shuffle
+# The GFF files. Using an R script because we can set the seed for random
+# number generation and make the shuffle repreatable.
+
+shuffledmRNAHitsGff=$(addprefix $(gffDir)/,shuffled.mRNAHits.gff)
+
+shuffledlncRNAHitsGff=$(addprefix $(gffDir)/,shuffled.lncRNAHits.gff)
+
+$(shuffledmRNAHitsGff): $(condsolidatedmRNAHitsGff)
+	Rscript scripts/shuffle.R $(condsolidatedmRNAHitsGff) > $(shuffledmRNAHitsGff)
+
+$(shuffledlncRNAHitsGff): $(condsolidatedlncRNAHitsGff)
+	Rscript scripts/shuffle.R $(condsolidatedlncRNAHitsGff) > $(shuffledlncRNAHitsGff)
+
+.PHONY: shuffle
+
+shuffle: $(shuffledmRNAHitsGff) $(shuffledlncRNAHitsGff)
