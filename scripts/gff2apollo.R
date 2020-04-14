@@ -23,11 +23,12 @@ gff.in <- read.table(inFile,
 # Should always be 9 columns, but let's make sure
 
 tab.out <- gff.in[,1:9]
-tab.out$transcript <- str_remove((str_split(tab.out$gff_attributes, 
-                                            ';', 
-                                            simplify = T)[,1]
-                                  ), 
-                                 "ID=rna-")
+
+tab.out$locus <- str_remove(str_split(tab.out$gff_attributes, 
+                                      ';', 
+                                      simplify = T)[,2], 
+                            "Parent=gene-")
+
 # Format to paste into Apollo's location bar
 tab.out$location <- paste(tab.out$gff_seqid, 
                           paste(tab.out$gff_start, 
@@ -50,3 +51,4 @@ write.table(tab.out,
             row.names = F, 
             col.names = T, 
             sep = '\t')
+
