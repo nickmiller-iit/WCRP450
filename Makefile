@@ -200,36 +200,36 @@ transcriptswithhits: $(overlapGffFiles)
 
 #
 # There is a lot of redundancy - mutliple hits to the same model. There is also a
-# lot of redundancy with multiple, near-identical gene models for the same gene.
-# We don't want to wade through all of this. Not thate we used trial-and error
-# to figure out the max number of alternative transcrips was 10.
+# lot of redundancy with multiple, transcript models for the same gene.
+# We don't want to wade through all of this.
 #
+# The key is the second element in the GFF attribute column is the parent locus,
+# which is the same for all transcript variants. We can use the parent locus as
+# basis for consolidating transcript variants
 
-# get the consolidated list of hits
-consolidatedHitsList=$(addprefix $(gffDir)/,consolidatedHits.txt)
+parentLoci=$(addprefix $(gffDir)/,parentLoci.txt)
 
-$(consolidatedHitsList): $(overlapGffFiles)
-	cat $(overlapGffFiles) \
-	| cut -f9 | \
-	grep -v "transcript variant X[2-9,10]" \
-	| sort -u \
-	| cut -d ';' -f1 \
-	> $(consolidatedHitsList)
+$(parentLoci): $(overlapGffFiles)
+	cat $(overlapGffFiles) | \
+	cut -f9 | \
+	sort -t ';' -k2 | \
+	cut -d ';' -f2 | \
+	uniq > $(parentLoci)
 
-.PHONY: consolidatehits
+.PHONY: uniqueparentloci
 
-consolidatehits: $(consolidatedHitsList)
+uniqueparentloci: $(parentLoci)
 
 # Use the list of hits to grep for corresponding lines in gff
-# Don't forget to drop non-unique lines
+# Only want one match per parent locus (grep option -m 1). Not especially
+# speedy thanks to use of loops and tmp files, but does the job.
 
 consolidatedHitsGff=$(addprefix $(gffDir)/,consolidatedHits.gff)
 
-$(consolidatedHitsGff) : $(consolidatedHitsList)
-	cat $(overlapGffFiles) | \
-	grep -f $(consolidatedHitsList) | \
-	sort -u \
-	> $(consolidatedHitsGff)
+$(consolidatedHitsGff) : $(parentLoci)
+	for x in `cat $(parentLoci)`; do cat $(overlapGffFiles) | grep $$x -m1 > $(gffDir)/$$x.tmp; done
+	cat gff/*.tmp > $(consolidatedHitsGff)
+	rm gff/*.tmp
 
 .PHONY: consolidatehitsgff
 
@@ -252,10 +252,10 @@ condsolidatedmRNAHitsGff=$(addprefix $(gffDir)/,consolidated.mRNAHits.gff)
 condsolidatedlncRNAHitsGff=$(addprefix $(gffDir)/,consolidated.lncRNAHits.gff)
 
 $(condsolidatedmRNAHitsGff): $(consolidatedHitsGff)
-	grep -v "lnc_RNA" $(consolidatedHitsGff) > $(condsolidatedmRNAHitsGff)
+	grep -P "Gnomon\tmRNA" $(consolidatedHitsGff) > $(condsolidatedmRNAHitsGff)
 
 $(condsolidatedlncRNAHitsGff): $(consolidatedHitsGff)
-	grep "lnc_RNA" $(consolidatedHitsGff) > $(condsolidatedlncRNAHitsGff)
+	grep -P "Gnomon\tlnc_RNA" $(consolidatedHitsGff) > $(condsolidatedlncRNAHitsGff)
 
 .PHONY: splitconsolidated
 
