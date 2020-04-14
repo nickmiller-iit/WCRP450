@@ -3,7 +3,7 @@
 set.seed(20200408)
 inFile <- commandArgs(trailingOnly = T)[1]
 
-gff.in <- read.table(inFile, header = F, sep = '\t')
+gff.in <- read.table(inFile, header = F, sep = '\t', quote = "", fill = F)
 line.count <- length(gff.in[,1])
 new.lines <- sample(1:line.count)
 gff.out <- gff.in[new.lines,]

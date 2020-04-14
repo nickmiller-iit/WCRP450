@@ -17,7 +17,9 @@ gff.in <- read.table(inFile,
                      header = F,
                      sep = '\t',
                      col.names = gff.cols,
-                     stringsAsFactors = F)
+                     stringsAsFactors = F,
+		     quote = "",
+		     fill = F)
 # Should always be 9 columns, but let's make sure
 
 tab.out <- gff.in[,1:9]
