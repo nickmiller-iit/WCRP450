@@ -22,3 +22,7 @@ Praline is not straightforward to install locally, but happily, it is available 
 ### WCR
 
 We have a total of 85 full-length manually curated sequences. To facilitate collaboration, the sequences were stored as fasta format in a Google Doc. They were downloaded, cleaned up (sequences unwrapped, DOS line breaks removed) and stored in `WCRFullLength.fasta`
+
+### Tribolium
+
+Tribolium P450 sequences were initially downloaded from **[FIXME get details from Dimpal]**. Fasta files of sequences were stored as Google Docs. Files were downloaded, cleaned up and stored under `Tcas/all/Tribolium_castaneum_CYP_*.fasta`. Files were edited by hand to include only one representative sequence per CYP family (the first sequence encountered from each family) and stored under `Tcas/1perFamily/Tribolium_castaneum_CYP_*.fasta`. A concatenated file with teh Tribolium P450 family representatives was stored under Tcas/TcasP450Families.fasta.
