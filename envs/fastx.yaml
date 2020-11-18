@@ -1,0 +1,7 @@
+name: p450_fastx
+channels:
+ - bioconda
+ - conda-forge
+dependencies:
+ - dos2unix
+ - fastx_toolkit
