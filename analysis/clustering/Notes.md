@@ -25,4 +25,16 @@ We have a total of 85 full-length manually curated sequences. To facilitate coll
 
 ### Tribolium
 
-Tribolium P450 sequences were initially downloaded from **[FIXME get details from Dimpal]**. Fasta files of sequences were stored as Google Docs. Files were downloaded, cleaned up and stored under `Tcas/all/Tribolium_castaneum_CYP_*.fasta`. Files were edited by hand to include only one representative sequence per CYP family (the first sequence encountered from each family) and stored under `Tcas/1perFamily/Tribolium_castaneum_CYP_*.fasta`. A concatenated file with teh Tribolium P450 family representatives was stored under Tcas/TcasP450Families.fasta.
+Tribolium P450 sequences were initially downloaded from NCBI. Fasta files of sequences were stored as Google Docs. Files were downloaded, cleaned up and stored under `Tcas/all/Tribolium_castaneum_CYP_*.fasta`. Files were edited by hand to include only one representative sequence per CYP family (the first sequence encountered from each family) and stored under `Tcas/1perFamily/Tribolium_castaneum_CYP_*.fasta`. A concatenated file with teh Tribolium P450 family representatives was stored under Tcas/TcasP450Families.fasta.
+
+### Combined
+
+Combined the WCR CYPs and the Tribolium family representatives together in file `WCRTcasP450.fasta`.
+
+## Running PRALINE
+
+Praline was run on `WCRTcasP450.fasta` via the web interface. All parameters were as default except that THMM was used to predict transmembrane regions. For reference, settings were captured in a screenshot:
+
+![Praline settings](Praline20201118.png)
+
+Took a few hours to run. Results are stored in file `PralineResults20201119/alignment.fasta_ali`. Did visualization in Geneious - the conserved P450 motif aligns properly, so we appear to be in good shape.
