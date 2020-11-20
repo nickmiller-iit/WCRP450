@@ -43,4 +43,8 @@ Took a few hours to run. Results are stored in file `PralineResults20201119/alig
 
 Ateempting to cluster and classify clusters into families using the 2020-11-18 WCR/Tribolium alignment revealed an issue. CYPs are classified into families on the basis of >=40% identity with another member of the family. This leads to a friends-of-friends situation, two protens may have <40% identity, but still be part of the same family because they both have >=40% identity with a third protein. This leads to a couple of related issues. Firstly, WCR proteins from the same CYP family may be split into > 1 cluster (although all memebers of a cluster should be from the same family. Secondly, an aritrary representative of a CYP family, taken from *Tribolium* will not necessarily cluster with WCR CYPs from the same family.
 
-As an alternative approach, tried running PRALINE with just the 85 WCR full length CYPs. The plan will be to cluster these, and then assign to families by blasting representatives from each cluster against UNIProt. PRALINE results are stored in `PralineResults20201119/alignment.fasta_ali`.
+As an alternative approach, tried running PRALINE with just the 85 WCR full length CYPs. The plan will be to cluster these, and then assign to families by blasting representatives from each cluster against UNIProt. As before, took a screenshot to document setting.
+
+![Praline settings](Praline20201120.png)
+
+PRALINE results are stored in `PralineResults20201119/alignment.fasta_ali`.
