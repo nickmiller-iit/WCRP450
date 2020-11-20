@@ -1,0 +1,126 @@
+---
+title: "Clustering P450s by % identity"
+output: html_notebook
+---
+
+Cytochrome P450 sequences form WCR and *Tribolium* were aligned using PRALINE. Next we need to cluster the sequences based on % identity assign clusters to CYP families.
+
+# Functions
+
+Compute % identity for a pair of aligned seqs. Note that because this is a multiple alignement, any 2 seqs may both have a gap at the same position. These shared gaps should not contribute to the % identity calculation
+
+```{r}
+pc.Identity <- function(seq1, seq2){
+  s1 <- str_split(seq1[1], pattern = "", simplify = T)[1,]
+  s2 <- str_split(seq2[1], pattern = "", simplify = T)[1,]
+  sharedGaps <- (s1 == "-") & (s2 == "-")
+  s1 <- s1[!sharedGaps]
+  s2 <- s2[!sharedGaps]
+  identicalResidues <- sum(s1 == s2)
+  return((identicalResidues / length(s1)) * 100)
+  }
+```
+
+
+# Load required libs
+
+```{r}
+library(seqinr)
+library(stringr)
+library(purrr)
+```
+
+# Load in the sequences from the aligned fasta file.
+
+```{r}
+#alignFile <- "test.fasta"
+alignFile <- "PralineResults20201120/alignment.fasta_ali"
+seqs <- read.fasta(file = alignFile,
+                   seqtype = "AA",
+                   as.string = T)
+seqs <- unlist(seqs)
+```
+
+# Seq up all pairwise combinations of sequences.
+
+This is not an efficient way to do things as there is some redundancy, but it's easier to follow.
+
+```{r}
+tmp1 <- rep(seqs, times = length(seqs))
+tmp2 <- rep(seqs, each = length(seqs))
+dat <- data.frame(name1 = names(tmp1),
+                  seq1 = tmp1,
+                  name2 = names(tmp2),
+                  seq2 = tmp2,
+                  stringsAsFactors = F)
+```
+
+# Compute % identity for each sequence pair
+
+```{r}
+dat$pc.ID <- unlist(map2(dat$seq1, 
+                         dat$seq2, 
+                         pc.Identity)
+                    )
+
+```
+
+# Set up distance matrix
+
+Heirarchical clustering requires a distance measure, use 100 - %Identity. First make a reulr matrix, then a `dist` object.
+
+```{r}
+dists <- matrix(100 - dat$pc.ID, 
+                ncol = length(seqs),
+                byrow = F,
+                dimnames = list(names(seqs), names(seqs))
+                )
+dists <- as.dist(dists)
+```
+
+# Cluster
+
+The single-linkage method is the correct one to use here. It produces clustering in which each member of a cluster of height $h$ has a distance $d \leq h$ to at least one other member of the cluster. This allows for the possibility that for any given pair in a cluster, it is possible that $d \gt h$. This seems odd but actually corresponds to the rule for family assignment for CYPS, which is simply $\gt 40\%$ identity with another member of the family.
+
+```{r}
+clusts <- hclust(dists,
+                 method = "single")
+plot(clusts)
+```
+
+Not an especially readable plot, but shows things are working!
+
+# Extract CYP family groups
+
+CYP family membership criterion is 40%.
+
+```{r}
+cyp.fam.pc.id = 40
+cyp.fams <- cutree(clusts,
+                   h = 100 - cyp.fam.pc.id)
+cyp.fams <- sort(cyp.fams)
+```
+
+Organize results in a data.frame. Write it out to file.
+
+```{r}
+cyp.results <- data.frame(gene = names(cyp.fams),
+                          group = cyp.fams)
+
+write.table(cyp.results, 
+            file = "WCRCYPGroups.tsv", 
+            quote = F, 
+            sep = '\t', 
+            row.names = F)
+```
+
+
+
+
+
+
+
+
+
+
+

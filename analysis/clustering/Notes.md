@@ -48,3 +48,7 @@ As an alternative approach, tried running PRALINE with just the 85 WCR full leng
 ![Praline settings](Praline20201120.png)
 
 PRALINE results are stored in `PralineResults20201119/alignment.fasta_ali`.
+
+# Clustering
+
+This can be done fairly easily in R. The process is documented in R notebook `clustering.Rmd`, rendered in `clustering.nb.html`. The groups are recorded in file `WCRCYPGroups.tsv`.
