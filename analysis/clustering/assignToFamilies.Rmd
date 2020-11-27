@@ -1,0 +1,69 @@
+---
+title: "Assigning WCR P450s to CYP families"
+output: html_notebook
+---
+
+Having clustered WCR P450s into groups based on %identity, and then assigned groups to CYP families, now we want to map the family assignments to individual P450s. This can be done easily with the database-like functionality found in dplyr.
+
+# Load libraries
+
+```{r}
+library(dplyr)
+library(stringr)
+```
+
+# Load data
+
+```{r}
+wcr.p450s <- read.table("WCRCYPGroups.tsv",
+                        header = T,
+                        stringsAsFactors = F)
+
+wcr.p450.families <- read.table("WCRCYPGroupsFamilies.tsv",
+                                header = T,
+                                stringsAsFactors = F)
+```
+
+Use a `left_join` to map familes to individual genes.
+
+```{r}
+wcr.p450.assigned <- left_join(wcr.p450s, 
+                               wcr.p450.families, 
+                               by = "group")[,c(1,6)]
+
+```
+
+Out of interest, what's the distribution of genes among families?
+
+```{r}
+tab <- table(wcr.p450.assigned$family)
+tab
+```
+
+```{r}
+barplot(tab, 
+        las = 2,
+        cex.names = 0.75,
+        col = "steelblue2")
+
+```
+
+Write out a table with the gene - family associations. Note that PRALINE likes to change the `.` at the end of transcript names to `_`. Change them back so we are consistent with Apollo, etc.
+
+```{r}
+wcr.p450.assigned$gene <- str_replace(str_replace_all(wcr.p450.assigned$gene, 
+                                                      "_", 
+                                                      "\\."), 
+                                      "XM.", 
+                                      "XM_")
+
+```
+
+```{r}
+write.table(wcr.p450.assigned,
+            file = "WCRCYPFamilies.tsv",
+            quote = F,
+            row.names = F,
+            sep = '\t')
+```
+
