@@ -11,3 +11,5 @@ Made an input fasta file (`PralineIn.fasta`) by combining the 85 full-length WCR
 Ran PRALINE via the web interface at https://www.ibi.vu.nl/programs/#msa. Took a screen shot to record the parameters
 
 ![Praline settings](PralineSettings20201221.png)
+
+PRALINE alignment was stored in `PralineResults20201221/alignment.fasta_ali`. Because PRALINE likes to change various chracters to underscores, made a copy of the alignment, with original names restored as `PralineOut.fasta`
