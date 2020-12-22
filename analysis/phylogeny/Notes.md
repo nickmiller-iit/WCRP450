@@ -6,4 +6,8 @@ One question - do we include non-WCR CYPs as reference points? May not be necess
 
 ## Aligning P450s
 
-Made an input fasta file (`PralineIn.fasta`) by combining the 85 full-length WCR P450s (`WCRFullLength.fasta`) plus the 20 UniProt blast hits (`UniProtFamilyReps.fasta`). 
+Made an input fasta file (`PralineIn.fasta`) by combining the 85 full-length WCR P450s (`WCRFullLength.fasta`) plus the 20 UniProt blast hits (`UniProtFamilyReps.fasta`).
+
+Ran PRALINE via the web interface at https://www.ibi.vu.nl/programs/#msa. Took a screen shot to record the parameters
+
+![Praline settings](PralineSettings20201221.png)
