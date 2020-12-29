@@ -18,3 +18,12 @@ PRALINE alignment was stored in `PralineResults20201221/alignment.fasta_ali`. Be
 
 MEGA has a tool to select the best amino acid substitution model for maximum likelihood trees. Rand this tool and save the output to `MEGAModelSelection.txt`
 
+## ML Tree
+
+Lowest BIC was for model "LG+G+I+F" (LG with freqs, gammma distributed rates with invariant sites). Used this model to make the ML tree. Ran MEGA to buit the ML tree with 500 bootstrap replicates.
+
+Because MEGA is GUI based, took a screenshot to capture paramter settings (did this after analysis was done, but I'm confident params were the same).
+
+![MEGA settings](MEGASettings20201229.png)
+
+NEWICK formatted tree saved to `MEGAMLTree20201229.nwk`
