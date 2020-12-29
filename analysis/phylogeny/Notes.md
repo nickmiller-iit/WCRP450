@@ -13,3 +13,8 @@ Ran PRALINE via the web interface at https://www.ibi.vu.nl/programs/#msa. Took a
 ![Praline settings](PralineSettings20201221.png)
 
 PRALINE alignment was stored in `PralineResults20201221/alignment.fasta_ali`. Because PRALINE likes to change various chracters to underscores, made a copy of the alignment, with original names restored as `PralineOut.fasta`
+
+## Model selection for ML Tree
+
+MEGA has a tool to select the best amino acid substitution model for maximum likelihood trees. Rand this tool and save the output to `MEGAModelSelection.txt`
+
