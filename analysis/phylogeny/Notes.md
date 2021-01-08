@@ -27,3 +27,29 @@ Because MEGA is GUI based, took a screenshot to capture paramter settings (did t
 ![MEGA settings](MEGASettings20201229.png)
 
 NEWICK formatted tree saved to `MEGAMLTree20201229.nwk`
+
+# Producing a figure.
+
+Made use of the "Interactive tree of life" (https://itol.embl.de/).
+
+## Changing labels
+
+The labels for the UniProt CYP representatives are rather clunky and iTOL seems to choke on them. Changed them to just the UniProt accessions. Set up a file of sed commands in `iTOL/transformTree.sed` and ran `sed -f transformTree.sed ../MEGAMLTree20201229.nwk > WCRP450.nwk` from th `iTOL` dir.
+
+Uploaded `iTOL/WCRP450.nwk` to work with.
+
+## Colour coding
+
+Set up file `iTOL/treeColours.txt` to colour the tree by CYP family. Colour coding uses different shades of the same colour for different familes in the same clan.
+
+## Other tweaks
+
+Under the iTOL "advanced" tab:
+
+ * Set internal tree scal with label font size 29px
+ * Set to display botstraps
+   * Display range 0.8 - 1 (ie show for bootstrap values > 80%) 
+   * Display symbol (circle)
+   * Min and max sizes 10 px
+
+Downloaded as SVG. Used Illustrator to reposition legend and indicate CYP clans, deleted scale bar since the internal scale does the job. Saved as `iTOL/WCRP450s.svg`
